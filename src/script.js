@@ -2,6 +2,33 @@ document.querySelectorAll('.table-container table').forEach(table => {
     table.classList.add('hidden');
 });
 
+var toggle = false;
+var scrolled = false;
+
+function handleScroll() {
+    var scrollTop = window.scrollY;
+    if (scrollTop > 20) {
+        scrolled = true;
+    } else {
+        scrolled = false;
+    }
+    updateNav();
+}
+
+window.addEventListener("scroll", handleScroll);
+
+function updateNav() {
+    var nav = document.querySelector('header'); // Select the header instead of nav
+    if (scrolled) {
+        nav.className = 'fixed top-0 w-full transition-all duration-300 z-20 bg-black/50'; // Dark background
+    } else {
+        nav.className = 'fixed top-0 w-full transition-all duration-300 z-20 bg-transparent'; // Transparent background
+    }
+}
+
+// Initial call to set the navigation state
+updateNav();
+
 function showTable(leagueId, button) {
     // Oculta todos los elementos <tbody>
     document.querySelectorAll('tbody').forEach(tbody => {
@@ -43,16 +70,17 @@ function renderLeagueData(leagueName, tableBody) {
     // Limpia el contenido actual del <tbody>
     tableBody.innerHTML = '';
 
-    // Agrega los jugadores a la tabla
-    leaguePlayers.forEach(player => {
+    // Agrega los jugadores con el diseño original intacto
+    leaguePlayers.forEach((player, index) => {
         tableBody.innerHTML += `
-            <tr class="hover:bg-[#4facfe]/10 transition-all duration-300 text-white">
-                <td class="px-6 py-4">${player.rank}</td>
-                <td class="px-6 py-4 font-semibold">${player.name}</td>
-                <td class="px-6 py-4">${player.points}</td>
-                <td class="px-6 py-4">${player.wins}</td>
-            </tr>
-        `;
+        <tr class="${index % 2 === 0 ? 'bg-gray-800/30' : 'bg-gray-700/30'} hover:bg-[#4facfe]/10 transition-all duration-300 text-white">
+            <td class="px-6 py-4">${player.rank}</td>
+            <td class="px-6 py-4 font-semibold">${player.name}</td>
+            <td class="px-6 py-4">${player.country}</td>
+            <td class="px-6 py-4">${player.points}</td>
+            <td class="px-6 py-4">${player.wins}</td>
+        </tr>
+    `;
     });
 }
 
@@ -77,6 +105,7 @@ function renderLeagueData(leagueName, tableBody) {
             <tr class="${index % 2 === 0 ? 'bg-gray-800/30' : 'bg-gray-700/30'} hover:bg-[#4facfe]/10 transition-all duration-300 text-white">
                 <td class="px-6 py-4">${player.rank}</td>
                 <td class="px-6 py-4 font-semibold">${player.name}</td>
+                <td class="px-6 py-4">${player.country}</td>
                 <td class="px-6 py-4">${player.points}</td>
                 <td class="px-6 py-4">${player.wins}</td>
             </tr>
@@ -84,15 +113,55 @@ function renderLeagueData(leagueName, tableBody) {
     });
 }
 
-const menuToggle = document.getElementById('menu-toggle');
-const mobileMenu = document.getElementById('mobile-menu');
-const menuIcon = document.getElementById('menu-icon');
-const closeIcon = document.getElementById('close-icon');
+// Show League A table by default on page load
+document.addEventListener('DOMContentLoaded', () => {
+    showTable('leagueA', document.querySelector('.league-button')); // Pass the first button as the active button
+});
 
-menuToggle.addEventListener('click', () => {
-    mobileMenu.classList.toggle('hidden');
-    menuIcon.classList.toggle('hidden');
-    closeIcon.classList.toggle('hidden');
+document.addEventListener('DOMContentLoaded', function () {
+    const menuButton = document.getElementById('menu-button');
+    const mobileMenu = document.getElementById('mobile-menu');
+    const menuIconOpen = document.getElementById('menu-icon-open');
+    const menuIconClose = document.getElementById('menu-icon-close');
+
+    menuButton.addEventListener('click', function () {
+        const isMenuVisible = mobileMenu.classList.contains('block');
+
+        if (isMenuVisible) {
+            mobileMenu.classList.remove('block');
+            mobileMenu.classList.add('opacity-0');
+            setTimeout(() => {
+                mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('opacity-0');
+            }, 300);
+            menuIconOpen.classList.remove('hidden');
+            menuIconOpen.classList.add('block');
+            menuIconClose.classList.remove('block');
+            menuIconClose.classList.add('hidden');
+        } else {
+            mobileMenu.classList.remove('hidden');
+            setTimeout(() => {
+                mobileMenu.classList.add('block');
+                mobileMenu.classList.remove('opacity-0');
+            }, 10);  // Small delay transition
+            menuIconOpen.classList.remove('block');
+            menuIconOpen.classList.add('hidden');
+            menuIconClose.classList.remove('hidden');
+            menuIconClose.classList.add('block');
+        }
+    });
+});
+
+ScrollReveal().reveal('.item', { delay: 250 });
+ScrollReveal().reveal('.item', { duration: 500 });
+ScrollReveal().reveal('.item', { delay: 375, reset: true });
+
+// Is the same as...
+
+ScrollReveal().reveal('.scroll-reveal', {
+    delay: 375,
+    duration: 700,
+    reset: false
 });
 
 const recentMatches = [
@@ -103,40 +172,40 @@ const recentMatches = [
 
 const leagueData = {
     "League A": [
-        { rank: 1, name: "SSJ_Goku_Master", points: 2800, wins: 45 },
-        { rank: 2, name: "VegetaPrince", points: 2750, wins: 42 },
-        { rank: 3, name: "GohanScholar", points: 2600, wins: 40 },
-        { rank: 4, name: "TrunksTimeLord", points: 2500, wins: 38 },
-        { rank: 5, name: "PiccoloSensei", points: 2400, wins: 36 },
-        { rank: 6, name: "FriezaEmperor", points: 2350, wins: 35 },
-        { rank: 7, name: "CellPerfect", points: 2300, wins: 33 },
-        { rank: 8, name: "BuuSagaHero", points: 2250, wins: 32 },
-        { rank: 9, name: "BrolyLegend", points: 2200, wins: 30 },
-        { rank: 10, name: "GokuBlackRose", points: 2150, wins: 28 },
+        { rank: 1, name: "SSJ_Goku_Master", country: "Argentina", points: 2800, wins: 45 },
+        { rank: 2, name: "VegetaPrince", country: "Brasil", points: 2750, wins: 42 },
+        { rank: 3, name: "GohanScholar", country: "Chile", points: 2600, wins: 40 },
+        { rank: 4, name: "TrunksTimeLord", country: "Paraguay", points: 2500, wins: 38 },
+        { rank: 5, name: "PiccoloSensei", country: "Colombia", points: 2400, wins: 36 },
+        { rank: 6, name: "FriezaEmperor", country: "Argentina", points: 2350, wins: 35 },
+        { rank: 7, name: "CellPerfect", country: "Colombia", points: 2300, wins: 33 },
+        { rank: 8, name: "BuuSagaHero", country: "Argentina", points: 2250, wins: 32 },
+        { rank: 9, name: "BrolyLegend", country: "Chile", points: 2200, wins: 30 },
+        { rank: 10, name: "GokuBlackRose", country: "Argentina", points: 2150, wins: 28 },
     ],
     "League B": [
-        { rank: 1, name: "KrillinWarrior", points: 2000, wins: 40 },
-        { rank: 2, name: "Tien_Master", points: 1950, wins: 38 },
-        { rank: 3, name: "YamchaWolf", points: 1900, wins: 36 },
-        { rank: 4, name: "RoshiLegend", points: 1850, wins: 35 },
-        { rank: 5, name: "ChiaotzuFighter", points: 1800, wins: 33 },
-        { rank: 6, name: "VidelCity", points: 1750, wins: 32 },
-        { rank: 7, name: "Pan_GT", points: 1700, wins: 30 },
-        { rank: 8, name: "UubStudent", points: 1650, wins: 28 },
-        { rank: 9, name: "MarronFighter", points: 1600, wins: 26 },
-        { rank: 10, name: "GotenksFusion", points: 1550, wins: 25 },
+        { rank: 1, name: "KrillinWarrior", country: "Argentina", points: 2000, wins: 40 },
+        { rank: 2, name: "Tien_Master", country: "Chile", points: 1950, wins: 38 },
+        { rank: 3, name: "YamchaWolf", country: "Argentina", points: 1900, wins: 36 },
+        { rank: 4, name: "RoshiLegend", country: "Colombia", points: 1850, wins: 35 },
+        { rank: 5, name: "ChiaotzuFighter", country: "Argentina", points: 1800, wins: 33 },
+        { rank: 6, name: "VidelCity", country: "Chile", points: 1750, wins: 32 },
+        { rank: 7, name: "Pan_GT", country: "Brasil", points: 1700, wins: 30 },
+        { rank: 8, name: "UubStudent", country: "Colombia", points: 1650, wins: 28 },
+        { rank: 9, name: "MarronFighter", country: "Argentina", points: 1600, wins: 26 },
+        { rank: 10, name: "GotenksFusion", country: "Colombia", points: 1550, wins: 25 },
     ],
     "League C": [
-        { rank: 1, name: "NailNamek", points: 1400, wins: 35 },
-        { rank: 2, name: "ZarbonElite", points: 1350, wins: 33 },
-        { rank: 3, name: "DodoriaForce", points: 1300, wins: 31 },
-        { rank: 4, name: "CaptainGinyu", points: 1250, wins: 30 },
-        { rank: 5, name: "JeicePower", points: 1200, wins: 28 },
-        { rank: 6, name: "BurterSpeed", points: 1150, wins: 26 },
-        { rank: 7, name: "RecoomeStrong", points: 1100, wins: 25 },
-        { rank: 8, name: "GuldoTime", points: 1050, wins: 23 },
-        { rank: 9, name: "RaditzSaiyan", points: 1000, wins: 22 },
-        { rank: 10, name: "NappaElite", points: 950, wins: 20 },
+        { rank: 1, name: "NailNamek", country: "Argentina", points: 1400, wins: 35 },
+        { rank: 2, name: "ZarbonElite", country: "Argentina", points: 1350, wins: 33 },
+        { rank: 3, name: "DodoriaForce", country: "Argentina", points: 1300, wins: 31 },
+        { rank: 4, name: "CaptainGinyu", country: "Argentina", points: 1250, wins: 30 },
+        { rank: 5, name: "JeicePower", country: "Argentina", points: 1200, wins: 28 },
+        { rank: 6, name: "BurterSpeed", country: "Argentina", points: 1150, wins: 26 },
+        { rank: 7, name: "RecoomeStrong", country: "Argentina", points: 1100, wins: 25 },
+        { rank: 8, name: "GuldoTime", country: "Argentina", points: 1050, wins: 23 },
+        { rank: 9, name: "RaditzSaiyan", country: "Argentina", points: 1000, wins: 22 },
+        { rank: 10, name: "NappaElite", country: "Argentina", points: 950, wins: 20 },
     ],
 };
 
@@ -147,29 +216,37 @@ document.getElementById('menu-toggle').addEventListener('click', () => {
     mobileMenu.classList.toggle('hidden');
 });
 
+function openPage(url) {
+    window.open(url, '_blank'); // Opens the URL in a new tab
+    // Alternatively, use window.location.href = url; to redirect in the same tab
+}
+
 const newsData = [
     {
         title: "Liga Profesional Online",
         date: "2024-12-14",
         excerpt: "LIGA PROFESIONAL ONLINE💥 En esta liga encontraras a los mejores jugadores de cada país midiendo su fuerza.",
         imageUrl: "https://via.placeholder.com/400x200", // Imagen de ejemplo
+        link: "https://www.youtube.com/watch?v=kMsvzlDSFqg" // Replace with actual URL
     },
     {
         title: "Guías Para Budokai Tenkaichi 3",
         date: "2024-12-13",
         excerpt: "Estas Guías Se Enfocan En Enseñar Cómo Utilizar Y Activar La Técnica Contra Z De Forma Infinita, Contrarrestar Ataques..",
         imageUrl: "img/guia.png",
+        link: "https://www.youtube.com/watch?v=x91HqxZm4Oc&ab_channel=MickyCoronel" // Replace with actual URL
     },
     {
         title: "Combos Y Jugadas",
         date: "2024-12-12",
         excerpt: "Estas Guías En Dragon Ball Z: Budokai Tenkaichi 3 Enseñan Diferentes Combos Y Jugadas Para Dominar Con El Personaje Cell..",
         imageUrl: "img/combos.jpg",
+        link: "https://www.youtube.com/watch?v=btEc9mzsJf4" // Replace with actual URL
     },
 ];
 
 const newsContainer = document.getElementById('news-container');
-newsContainer.innerHTML = ''; // Limpia el contenedor antes de agregar tarjetas
+newsContainer.innerHTML = ''; // Clear the container before adding cards
 
 newsData.forEach(news => {
     newsContainer.innerHTML += `
@@ -179,16 +256,21 @@ newsData.forEach(news => {
         <img src="${news.imageUrl}" alt="${news.title}" class="w-full h-40 object-cover rounded-lg mb-4">
         <div class="flex justify-between items-center">
         <p class="text-gray-300 flex-grow">${news.excerpt}</p>
-        <button class="text-[#00f2fe] font-semibold mt-4 hover:text-[#ff0080] transition-colors flex items-center">
-        Read More
-        <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
-        </svg>
+        <button class="text-[#00f2fe] font-semibold mt-4 hover:text-[#ff0080] transition-colors flex items-center" onclick="openPage('${news.link}')">
+            Read More
+            <svg xmlns="http://www.w3.org/2000/svg" class="inline ml-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" width="16" height="16">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
         </button>
         </div>
     </div>
 `;
 });
+
+// Function to open a new page
+function openPage(url) {
+    window.open(url, '_blank'); // Opens the URL in a new tab
+}
 
 
 // Function to render recent matches and league data
@@ -229,13 +311,13 @@ function renderData() {
     leagueTableBody.innerHTML = '';
     leagueData[activeLeague].forEach((player, index) => {
         leagueTableBody.innerHTML += `
-                    <tr class="${index % 2 === 0 ? 'bg-gray-800/30' : 'bg-gray-700/30'} hover:bg-[#4facfe]/10 transition-all duration-300 text-white">
-                        <td class="px-6 py-4">${player.rank}</td>
-                        <td class="px-6 py-4 font-semibold">${player.name}</td>
-                        <td class="px-6 py-4">${player.points}</td>
-                        <td class="px-6 py-4">${player.wins}</td>
-                    </tr>
-                `;
+                <tr class="${index % 2 === 0 ? 'bg-gray-800/30' : 'bg-gray-700/30'} hover:bg-[#4facfe]/10 transition-all duration-300 text-white">
+                    <td class="px-6 py-4">${player.rank}</td>
+                    <td class="px-6 py-4 font-semibold">${player.name}</td>
+                    <td class="px-6 py-4">${player.points}</td>
+                    <td class="px-6 py-4">${player.wins}</td>
+                </tr>
+            `;
     });
 }
 
