@@ -165,9 +165,9 @@ ScrollReveal().reveal('.scroll-reveal', {
 });
 
 const recentMatches = [
-    { id: 1, league: "League A", winner: { name: "SSJ_Goku_Master", score: 5 }, loser: { name: "VegetaPrince", score: 0 }, stake: 1000, date: "2023-06-20" },
-    { id: 2, league: "League B", winner: { name: "KrillinWarrior", score: 5 }, loser: { name: "Tien_Master", score: 2 }, stake: 800, date: "2023-06-19" },
-    { id: 3, league: "League A", winner: { name: "GohanScholar", score: 5 }, loser: { name: "CellPerfect", score: 3 }, stake: 1200, date: "2023-06-18" },
+    { id: 1, league: "Liga A", winner: { name: "SSJ_Goku_Master", score: 5 }, loser: { name: "VegetaPrince", score: 0 }, stake: 1000, date: "2023-06-20" },
+    { id: 2, league: "Liga B", winner: { name: "KrillinWarrior", score: 5 }, loser: { name: "Tien_Master", score: 2 }, stake: 800, date: "2023-06-19" },
+    { id: 3, league: "Liga A", winner: { name: "GohanScholar", score: 5 }, loser: { name: "CellPerfect", score: 3 }, stake: 1200, date: "2023-06-18" },
 ];
 
 const leagueData = {
